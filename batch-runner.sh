@@ -31,6 +31,11 @@ SUMMARY_DIR="${PWD}/dna-extracts/summary"
 LOG_FILE="${SUMMARY_DIR}/batch_log.txt"
 RESULTS_FILE="${SUMMARY_DIR}/.results.tmp"
 
+# Create directories FIRST before anything else
+mkdir -p "$SUMMARY_DIR"
+rm -f "$LOG_FILE" "$RESULTS_FILE"
+touch "$LOG_FILE" "$RESULTS_FILE"
+
 # Timestamps
 BATCH_START=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 BATCH_START_EPOCH=$(date +%s)
@@ -67,21 +72,6 @@ error() {
 
 warn() {
   echo -e "${YELLOW}⚠${NC} $1" | tee -a "$LOG_FILE"
-}
-
-setup() {
-  log "=========================================="
-  log "REPO DNA SYSTEM — BATCH RUNNER"
-  log "=========================================="
-  
-  mkdir -p "$SUMMARY_DIR"
-  rm -f "$LOG_FILE" "$RESULTS_FILE"
-  touch "$LOG_FILE" "$RESULTS_FILE"
-  
-  log "Batch Start: $BATCH_START"
-  log "Repos File: $REPOS_FILE"
-  log "Max Concurrent: $MAX_CONCURRENT"
-  log ""
 }
 
 load_repos() {
@@ -153,34 +143,41 @@ generate_batch_report() {
   local csv_content="$csv_header"
   
   local first=true
-  while IFS='|' read -r repo_full status; do
-    [ -z "$repo_full" ] && continue
-    
-    local owner=$(echo "$repo_full" | cut -d'/' -f1)
-    local repo=$(echo "$repo_full" | cut -d'/' -f2)
-    
-    if [ "$status" = "success" ]; then
-      ((SUCCESSFUL++))
+  if [ -f "$RESULTS_FILE" ]; then
+    while IFS='|' read -r repo_full status; do
+      [ -z "$repo_full" ] && continue
       
-      local metrics=$(extract_repo_metrics "$owner" "$repo")
-      IFS='|' read -r tech_stack readme_status maturity security <<< "$metrics"
+      local owner=$(echo "$repo_full" | cut -d'/' -f1)
+      local repo=$(echo "$repo_full" | cut -d'/' -f2)
       
-      # Add to JSON
-      if [ "$first" = false ]; then
-        repos_json+=","
+      if [ "$status" = "success" ]; then
+        ((SUCCESSFUL++))
+        
+        local metrics=$(extract_repo_metrics "$owner" "$repo")
+        IFS='|' read -r tech_stack readme_status maturity security <<< "$metrics"
+        
+        # Add to JSON
+        if [ "$first" = false ]; then
+          repos_json+=","
+        fi
+        repos_json+="{\"owner\":\"$owner\",\"repo\":\"$repo\",\"status\":\"success\",\"tech_stack\":\"$tech_stack\",\"readme_status\":\"$readme_status\",\"maturity\":\"$maturity\",\"security_findings\":$security}"
+        first=false
+        
+        # Add to CSV
+        csv_content+=$'\n'"$owner,$repo,success,$tech_stack,$readme_status,$maturity,$security"
+      else
+        ((FAILED++))
+        
+        if [ "$first" = false ]; then
+          repos_json+=","
+        fi
+        repos_json+="{\"owner\":\"$owner\",\"repo\":\"$repo\",\"status\":\"failed\"}"
+        first=false
+        
+        csv_content+=$'\n'"$owner,$repo,failed,n/a,n/a,n/a,n/a"
       fi
-      repos_json+="{\"owner\":\"$owner\",\"repo\":\"$repo\",\"status\":\"success\",\"tech_stack\":\"$tech_stack\",\"readme_status\":\"$readme_status\",\"maturity\":\"$maturity\",\"security_findings\":$security}"
-      first=false
-      
-      # Add to CSV
-      csv_content+=$'\n'"$owner,$repo,success,$tech_stack,$readme_status,$maturity,$security"
-    else
-      ((FAILED++))
-      
-      repos_json+="{\"owner\":\"$owner\",\"repo\":\"$repo\",\"status\":\"failed\"}"
-      csv_content+=$'\n'"$owner,$repo,failed,n/a,n/a,n/a,n/a"
-    fi
-  done < "$RESULTS_FILE"
+    done < "$RESULTS_FILE"
+  fi
   
   repos_json+="]"
   
@@ -236,7 +233,14 @@ print_summary() {
 # ============================================================================
 
 main() {
-  setup
+  log "=========================================="
+  log "REPO DNA SYSTEM — BATCH RUNNER"
+  log "=========================================="
+  
+  log "Batch Start: $BATCH_START"
+  log "Repos File: $REPOS_FILE"
+  log "Max Concurrent: $MAX_CONCURRENT"
+  log ""
   
   load_repos
   
