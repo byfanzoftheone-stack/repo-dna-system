@@ -29,6 +29,7 @@ TOKEN="${GITHUB_TOKEN:?GITHUB_TOKEN environment variable not set}"
 # Output directories
 SUMMARY_DIR="${PWD}/dna-extracts/summary"
 LOG_FILE="${SUMMARY_DIR}/batch_log.txt"
+RESULTS_FILE="${SUMMARY_DIR}/.results.tmp"
 
 # Timestamps
 BATCH_START=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
@@ -45,7 +46,6 @@ NC='\033[0m'
 TOTAL_REPOS=0
 SUCCESSFUL=0
 FAILED=0
-declare -a RESULTS
 
 # ============================================================================
 # UTILITY FUNCTIONS
@@ -75,7 +75,8 @@ setup() {
   log "=========================================="
   
   mkdir -p "$SUMMARY_DIR"
-  rm -f "$LOG_FILE"
+  rm -f "$LOG_FILE" "$RESULTS_FILE"
+  touch "$LOG_FILE" "$RESULTS_FILE"
   
   log "Batch Start: $BATCH_START"
   log "Repos File: $REPOS_FILE"
@@ -91,13 +92,10 @@ load_repos() {
     exit 1
   fi
   
-  mapfile -t repos < "$REPOS_FILE"
-  TOTAL_REPOS=${#repos[@]}
+  TOTAL_REPOS=$(grep -c . "$REPOS_FILE" || true)
   
   success "Loaded $TOTAL_REPOS repositories"
   log ""
-  
-  echo "${repos[@]}"
 }
 
 analyze_repo() {
@@ -109,10 +107,10 @@ analyze_repo() {
   
   if ./orchestrator.sh "$owner" "$repo" main 2>>"$LOG_FILE" >/dev/null; then
     success "✓ $repo_full"
-    echo "$repo_full|success|$((SECONDS))"
+    echo "$repo_full|success" >> "$RESULTS_FILE"
   else
     error "✗ $repo_full"
-    echo "$repo_full|failed|$((SECONDS))"
+    echo "$repo_full|failed" >> "$RESULTS_FILE"
   fi
 }
 
@@ -152,16 +150,17 @@ generate_batch_report() {
   # Build repositories array for JSON report
   local repos_json="["
   local csv_header="owner,repo,status,tech_stack,readme_status,maturity,security_findings"
-  local csv_content="$csv_header\n"
+  local csv_content="$csv_header"
   
   local first=true
-  for result in "${RESULTS[@]}"; do
-    IFS='|' read -r repo_full status duration <<< "$result"
+  while IFS='|' read -r repo_full status; do
+    [ -z "$repo_full" ] && continue
+    
+    local owner=$(echo "$repo_full" | cut -d'/' -f1)
+    local repo=$(echo "$repo_full" | cut -d'/' -f2)
     
     if [ "$status" = "success" ]; then
       ((SUCCESSFUL++))
-      local owner=$(echo "$repo_full" | cut -d'/' -f1)
-      local repo=$(echo "$repo_full" | cut -d'/' -f2)
       
       local metrics=$(extract_repo_metrics "$owner" "$repo")
       IFS='|' read -r tech_stack readme_status maturity security <<< "$metrics"
@@ -174,16 +173,15 @@ generate_batch_report() {
       first=false
       
       # Add to CSV
-      csv_content+="$owner,$repo,success,$tech_stack,$readme_status,$maturity,$security\n"
+      csv_content+=$'\n'"$owner,$repo,success,$tech_stack,$readme_status,$maturity,$security"
     else
       ((FAILED++))
-      local owner=$(echo "$repo_full" | cut -d'/' -f1)
-      local repo=$(echo "$repo_full" | cut -d'/' -f2)
       
       repos_json+="{\"owner\":\"$owner\",\"repo\":\"$repo\",\"status\":\"failed\"}"
-      csv_content+="$owner,$repo,failed,n/a,n/a,n/a,n/a\n"
+      csv_content+=$'\n'"$owner,$repo,failed,n/a,n/a,n/a,n/a"
     fi
-  done
+  done < "$RESULTS_FILE"
+  
   repos_json+="]"
   
   # Write JSON report
@@ -240,7 +238,7 @@ print_summary() {
 main() {
   setup
   
-  local repos=$(load_repos "$REPOS_FILE")
+  load_repos
   
   log "Processing $TOTAL_REPOS repositories..."
   log ""
@@ -249,7 +247,6 @@ main() {
   local i=0
   while IFS= read -r repo_full; do
     [ -z "$repo_full" ] && continue
-    [ "$repo_full" = "$REPOS_FILE" ] && continue
     
     analyze_repo "$repo_full" &
     
@@ -258,7 +255,7 @@ main() {
     if [ $((i % MAX_CONCURRENT)) -eq 0 ]; then
       wait
     fi
-  done <<< "$(cat "$REPOS_FILE")"
+  done < "$REPOS_FILE"
   
   # Wait for remaining background jobs
   wait
@@ -266,6 +263,9 @@ main() {
   log ""
   generate_batch_report
   print_summary
+  
+  # Cleanup
+  rm -f "$RESULTS_FILE"
 }
 
 # ============================================================================
