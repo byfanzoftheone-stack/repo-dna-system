@@ -1,0 +1,223 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Repository DNA Schema v1.1.0",
+  "description": "Complete structural and behavioral metadata for a GitHub repository",
+  "type": "object",
+  "required": [
+    "metadata",
+    "tech_stack",
+    "project_info",
+    "architecture"
+  ],
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "required": ["owner", "repo", "url", "extracted_at", "schema_version"],
+      "properties": {
+        "owner": { "type": "string", "description": "Repository owner (user/org)" },
+        "repo": { "type": "string", "description": "Repository name" },
+        "url": { "type": "string", "format": "uri", "description": "Full GitHub URL" },
+        "default_branch": { "type": "string" },
+        "extracted_at": { "type": "string", "format": "date-time" },
+        "schema_version": { "type": "string", "const": "1.1.0" },
+        "evidence_paths": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "File paths used to extract this DNA"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Overall confidence in extracted data (0.0-1.0)"
+        }
+      }
+    },
+    "tech_stack": {
+      "type": "object",
+      "properties": {
+        "languages": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "primary": { "type": "boolean" },
+              "evidence": { "type": "string" }
+            }
+          }
+        },
+        "frameworks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "version": { "type": "string" },
+              "evidence": { "type": "string" }
+            }
+          }
+        },
+        "runtime": {
+          "type": "object",
+          "properties": {
+            "type": { "type": "string", "enum": ["nodejs", "python", "jvm", "dotnet", "go", "rust", "docker", "native", "unknown"] },
+            "version": { "type": "string" },
+            "evidence": { "type": "string" }
+          }
+        },
+        "package_managers": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "npm, pip, cargo, go mod, etc."
+        },
+        "databases": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "type": { "type": "string" },
+              "version": { "type": "string" },
+              "evidence": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "project_info": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "purpose": { "type": "string", "enum": ["library", "service", "tool", "app", "framework", "template", "monorepo", "documentation", "example", "unknown"] },
+        "maturity": { "type": "string", "enum": ["archived", "inactive", "experimental", "active", "stable", "unknown"] },
+        "license": { "type": "string" },
+        "readme_status": { "type": "string", "enum": ["missing", "partial", "stale", "good", "unknown"] }
+      }
+    },
+    "architecture": {
+      "type": "object",
+      "properties": {
+        "entry_points": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "type": { "type": "string", "enum": ["main", "cli", "api", "library", "script", "unknown"] },
+              "path": { "type": "string" },
+              "description": { "type": "string" }
+            }
+          }
+        },
+        "core_modules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "path": { "type": "string" },
+              "purpose": { "type": "string" },
+              "exports": {
+                "type": "array",
+                "items": { "type": "string" }
+              }
+            }
+          }
+        },
+        "structure": {
+          "type": "string",
+          "enum": ["flat", "layered", "modular", "microservices", "monorepo", "unknown"],
+          "description": "Overall architectural pattern"
+        },
+        "dependencies": {
+          "type": "object",
+          "properties": {
+            "internal": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "module": { "type": "string" },
+                  "path": { "type": "string" }
+                }
+              }
+            },
+            "external": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "version": { "type": "string" },
+                  "type": { "type": "string", "enum": ["runtime", "dev", "peer", "optional"] }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "deployment": {
+      "type": "object",
+      "properties": {
+        "targets": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "docker, npm, pypi, github-pages, k8s, serverless, etc."
+        },
+        "ci_cd": {
+          "type": "object",
+          "properties": {
+            "provider": { "type": "string" },
+            "workflows": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Workflow file paths"
+            }
+          }
+        },
+        "environment_vars": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "required": { "type": "boolean" },
+              "evidence": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "testing": {
+      "type": "object",
+      "properties": {
+        "frameworks": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "coverage_tool": { "type": "string" },
+        "test_commands": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "test_paths": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "gaps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "category": { "type": "string" },
+          "issue": { "type": "string" },
+          "severity": { "type": "string", "enum": ["info", "warning", "critical"] }
+        }
+      },
+      "description": "Incomplete or unclear metadata marked as GAP:"
+    }
+  }
+}
