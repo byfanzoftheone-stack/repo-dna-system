@@ -1,0 +1,79 @@
+# Repo DNA — standalone runner.
+# Other people use this. THE ONE OS is not required.
+#
+# From this repo: Actions → Repo DNA → Run workflow → owner/repo
+# From another repo:
+#   jobs:
+#     dna:
+#       uses: byfanzoftheone-stack/repo-dna-system/.github/workflows/dna.yml@main
+#       with:
+#         target: owner/repo
+#       secrets:
+#         DNA_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#
+# Public targets work with the default token.
+# Private targets need a PAT (repo scope) in DNA_GITHUB_TOKEN.
+# Artifacts expire. Copy them into your own store if you want them to last.
+# This workflow never writes live README.md and never pushes to the target.
+
+name: Repo DNA
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "owner/repo to fingerprint"
+        required: true
+        type: string
+      branch:
+        description: "branch (default main)"
+        required: false
+        default: "main"
+        type: string
+  workflow_call:
+    inputs:
+      target:
+        description: "owner/repo to fingerprint"
+        required: true
+        type: string
+      branch:
+        required: false
+        type: string
+        default: "main"
+    secrets:
+      DNA_GITHUB_TOKEN:
+        required: false
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout DNA library
+        uses: actions/checkout@v4
+
+      - name: Run orchestrator v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.DNA_GITHUB_TOKEN || github.token }}
+        run: |
+          set -euo pipefail
+          TARGET="${{ inputs.target }}"
+          BRANCH="${{ inputs.branch }}"
+          if [[ ! "$TARGET" =~ ^[A-Za-z0-9._-]+/[A-Za-z0-9._-]+$ ]]; then
+            echo "target must be owner/repo" >&2
+            exit 1
+          fi
+          OWNER="${TARGET%/*}"
+          REPO="${TARGET#*/}"
+          chmod +x orchestrator.sh
+          ./orchestrator.sh "$OWNER" "$REPO" "$BRANCH"
+
+      - name: Upload fingerprints
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dna-extract
+          path: dna-extracts/
+          if-no-files-found: warn
+          retention-days: 30
