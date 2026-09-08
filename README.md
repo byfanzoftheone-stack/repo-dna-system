@@ -91,8 +91,10 @@ dna-extracts/<owner>/<repo>/
     06_code_quality.json
     07_asset_inventory.json
     08_architecture.json
+    08_architecture.txt            # architecture sketch
     03.5_forensic_report.json     # 23 sections, including 19–23
     README.rewrite.md             # never live README.md
+    10_consolidated_dna_report.json # one final consolidated result
     09_crystals.json              # skill 41 · optional · never Brain
 ```
 
