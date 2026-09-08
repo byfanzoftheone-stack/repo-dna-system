@@ -67,7 +67,7 @@ Each crystal: `id`, `kind`, `title`, `body`, `evidence`, `confidence`.
 
 ## Store
 
-Library stays extract-free. Copy `09_crystals.json` into the **results vault** (`repo-dna-results`), not this repo, if the target tree is private.
+Library stays extract-free. Copy `09_crystals.json` into the **results vault** (`repo-dna-output`), not this repo, if the target tree is private.
 
 ## Related
 

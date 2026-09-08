@@ -1,5 +1,5 @@
 # ⚡ DNA v2.0 PERFORMANCE OPTIMIZATION GUIDE
-**Complete Implementation for 5-Minute 62-Repo Analysis**  
+**Complete Implementation for 5-Minute Portfolio-Scale Analysis**  
 **Version**: 1.0 - Production Ready  
 **Date**: 2026-09-06  
 **Target**: 46 minutes → 5 minutes (10x faster)
@@ -13,7 +13,7 @@
 Sequential Execution:
 Skill 1 (1.2s) → Skill 2 (2.3s) → ... → Skill 30 (2.1s)
 Per repo: 45-60 seconds
-Total (62 repos): 46-62 minutes ❌
+Total (portfolio repos): 46-62 minutes ❌
 ```
 
 ### Target State (Optimized)
@@ -21,7 +21,7 @@ Total (62 repos): 46-62 minutes ❌
 Parallel + Cached + Incremental:
 Tier 1 (2s) ║ Tier 2 (3s) ║ Tier 3 (3s) ║ ... (parallel)
 Per repo: 2-3 seconds
-Total (62 repos): 3-5 minutes ✅
+Total (portfolio repos): 3-5 minutes ✅
 ```
 
 ---
@@ -1138,7 +1138,7 @@ WEEK 3+ (Optional Enhancements):
 ```
 OPTIMIZED DNA EXECUTION PIPELINE
 ┌─────────────────────────────────────────────────────────┐
-│  INPUT: 62 repos × 30 skills = 1,860 tasks            │
+│  INPUT: portfolio repos × 30 skills = 1,860 tasks            │
 └─────────────────────────────────────────────────────────┘
             ↓
 ┌─────────────────────────────────────────────────────────┐

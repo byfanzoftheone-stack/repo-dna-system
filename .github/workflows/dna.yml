@@ -1,11 +1,11 @@
 # Repo DNA — standalone runner.
-# Other people use this. THE ONE OS is not required.
+# Other people use this. a private OS dashboard is not required.
 #
 # From this repo: Actions → Repo DNA → Run workflow → owner/repo
 # From another repo:
 #   jobs:
 #     dna:
-#       uses: byfanzoftheone-stack/repo-dna-system/.github/workflows/dna.yml@main
+#       uses: example-owner/repo-dna-system/.github/workflows/dna.yml@main
 #       with:
 #         target: owner/repo
 #       secrets:

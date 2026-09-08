@@ -21,4 +21,4 @@ DNA is a fingerprint. Crystals are compressed facts with evidence.
 
 ## First run
 
-`byfanzoftheone-stack/the-one-universe` extract in the private vault.
+`example-owner/example-universe` extract in the private vault.

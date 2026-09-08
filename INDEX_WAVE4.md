@@ -21,7 +21,7 @@ These ran across the 74-repo inventory. Evidence-first. Fail-closed.
 | 10 | 10-bloat-detector-skill.md | node_modules / .next / .cache / 0-byte |
 | 11 | 11-stamp-detector-skill.md | harvest.js cb277eed, MASTER_INDEX 86850c5d, GROWTH_VECTOR 3802c71c |
 | 12 | 12-lineage-assembler-skill.md | 9 families, stamp edges not forks |
-| 13 | 13-secrets-quarantine-skill.md | the-one-market frontend/.env |
+| 13 | 13-secrets-quarantine-skill.md | sample-market frontend/.env |
 | 14 | 14-warehouse-stage-mapper-skill.md | intake → audit → sanitize → promote |
 | 15 | 15-iof-os-classifier-skill.md | IOF = OS, Warehouse = storage |
 | 16 | 16-drive-harvest-scout-skill.md | Brain Extractions, Engines. No folder named IOF |

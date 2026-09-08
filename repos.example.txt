@@ -1,3 +1,3 @@
 # One owner/repo per line. Public example only.
 # Copy to repos.txt and run: ./batch-runner.sh repos.txt
-byfanzoftheone-stack/repo-dna-system
+example-owner/repo-dna-system
