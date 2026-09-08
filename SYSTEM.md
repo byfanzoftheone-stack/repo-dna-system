@@ -11,7 +11,7 @@
 The **Repo DNA System** is a complete forensic analysis and documentation generation platform for GitHub repositories. It automatically extracts system architecture, technology stack, capabilities, assets, and business value from any repo, generating production-ready analysis reports and comprehensive documentation.
 
 **Primary Use Cases:**
-- Audit 60+ personal repositories in one batch run
+- Audit 60+ target repositories in one batch run
 - Understand what each system actually does (vs. what docs claim)
 - Extract reusable assets and intellectual property
 - Generate missing or outdated README files
@@ -81,10 +81,10 @@ Shell script that:
 
 **Input Format** (`repos.txt`):
 ```
-byfanzoftheone-stack/bookpro-booking-app
-byfanzoftheone-stack/fanzo-avatar
-byfanzoftheone-stack/THE-ONE-REFINERY
-byfanzoftheone-stack/the-one-saas
+example-owner/example-app
+example-owner/example-avatar
+example-owner/example-refinery
+example-owner/example-saas
 ...
 ```
 
@@ -233,20 +233,20 @@ Complete 23-section analysis:
 export GITHUB_TOKEN=ghp_xxxxxxxxxxxxx
 
 # Analyze one repo
-./orchestrator.sh byfanzoftheone-stack bookpro-booking-app main
+./orchestrator.sh example-owner example-app main
 
 # View results
-cat dna-extracts/byfanzoftheone-stack/bookpro-booking-app/output/README.rewrite.md
-jq . dna-extracts/byfanzoftheone-stack/bookpro-booking-app/output/02_repo_dna.json
+cat dna-extracts/example-owner/example-app/output/README.rewrite.md
+jq . dna-extracts/example-owner/example-app/output/02_repo_dna.json
 ```
 
-### Batch Analysis (All 62 Repos)
+### Batch Analysis (Batch Analysis (Portfolio))
 
 ```bash
 # Create repos list
-echo "byfanzoftheone-stack/bookpro-booking-app" > repos.txt
-echo "byfanzoftheone-stack/fanzo-avatar" >> repos.txt
-# ... add all 62 repos
+echo "example-owner/example-app" > repos.txt
+echo "example-owner/example-avatar" >> repos.txt
+# ... add all portfolio repos
 
 # Run batch analysis
 ./batch-runner.sh repos.txt
@@ -484,7 +484,7 @@ repo-dna-system/
 
 ```bash
 # Clone repo-dna-system
-git clone https://github.com/byfanzoftheone-stack/repo-dna-system.git
+git clone https://github.com/example-owner/repo-dna-system.git
 cd repo-dna-system
 
 # Set GitHub token
@@ -494,22 +494,22 @@ export GITHUB_TOKEN=ghp_xxxxxxxxxxxxx
 chmod +x orchestrator.sh batch-runner.sh
 
 # Test with single repo
-./orchestrator.sh byfanzoftheone-stack bookpro-booking-app main
+./orchestrator.sh example-owner example-app main
 
 # Check output
-ls -la dna-extracts/byfanzoftheone-stack/bookpro-booking-app/output/
+ls -la dna-extracts/example-owner/example-app/output/
 ```
 
-### Running on All Your Repos
+### Running on Multiple Repos
 
 ```bash
 # Create list of your repos
 cat > my_repos.txt <<EOF
-byfanzoftheone-stack/bookpro-booking-app
-byfanzoftheone-stack/fanzo-avatar
-byfanzoftheone-stack/THE-ONE-REFINERY
-byfanzoftheone-stack/the-one-saas
-byfanzoftheone-stack/repo-dna-system
+example-owner/example-app
+example-owner/example-avatar
+example-owner/example-refinery
+example-owner/example-saas
+example-owner/repo-dna-system
 EOF
 
 # Run batch analysis
@@ -526,7 +526,7 @@ cat dna-extracts/summary/batch_report.json | jq .
 This system is actively maintained and improved. 
 
 **To report issues or suggest features:**
-- GitHub Issues: https://github.com/byfanzoftheone-stack/repo-dna-system/issues
+- GitHub Issues: https://github.com/example-owner/repo-dna-system/issues
 
 **To contribute:**
 - Submit a pull request with improvements to any skill
@@ -556,4 +556,4 @@ Open source. Use freely for any project.
 **Last Analysis Run**: Not yet executed  
 **Confidence Level**: Experimental (65% average)
 
-**Next Steps**: Run batch analysis on all 62 repositories to build complete system understanding.
+**Next Steps**: Run batch analysis on all portfolio repositories to build complete system understanding.

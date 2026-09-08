@@ -393,7 +393,7 @@ dna-extracts/summary/
 - name: Analyze repository DNA
   uses: dna-system/analyze
   with:
-    owner: byfanzoftheone-stack
+    owner: example-owner
     repo: my-repo
     skills: '1,2,5,6'
 ```
@@ -474,13 +474,13 @@ cd ~/repo-dna-system
 
 ### 2. Single Repository
 ```bash
-./orchestrator.sh byfanzoftheone-stack/bookpro-booking-app
+./orchestrator.sh example-owner/example-app
 ```
 
 ### 3. Review Results
 ```bash
-cat dna-extracts/byfanzoftheone-stack/bookpro-booking-app/output/02_repo_dna.json
-cat dna-extracts/byfanzoftheone-stack/bookpro-booking-app/output/README.rewrite.md
+cat dna-extracts/example-owner/example-app/output/02_repo_dna.json
+cat dna-extracts/example-owner/example-app/output/README.rewrite.md
 ```
 
 ### 4. Batch Analysis

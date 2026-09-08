@@ -331,7 +331,7 @@ The Architecture Visualizer creates a comprehensive understanding of how systems
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│              BookPro Booking App Architecture           │
+│              SampleApp Booking App Architecture           │
 └─────────────────────────────────────────────────────────┘
 
                     ┌──────────────┐

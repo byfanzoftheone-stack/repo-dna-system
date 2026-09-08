@@ -774,7 +774,7 @@ echo "$README"
 ## Success Example
 
 ```markdown
-# BookPro — Service Booking App
+# SampleApp — Service Booking App
 
 A phone-first, browser-based service booking application designed for small businesses. It operates entirely in local storage by default and can be deployed from a smartphone directly to Netlify without build tools. Features include a monthly calendar with visual booking status (blue dots for bookings, red for cancellations), multi-user support with employee PINs, customizable branding, and optional Supabase integration for multi-tenant SaaS capabilities.
 
@@ -796,7 +796,7 @@ A phone-first, browser-based service booking application designed for small busi
 
 ### Deploy from Phone (3 minutes)
 
-1. Open https://github.com/byfanzoftheone-stack/bookpro-booking-app
+1. Open https://github.com/example-owner/example-app
 2. Tap **Code → Download ZIP**
 3. Unzip in Files
 4. Go to [netlify.com/drop](https://app.netlify.com/drop)
