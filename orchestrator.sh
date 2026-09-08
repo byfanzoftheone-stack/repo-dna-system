@@ -120,6 +120,9 @@ api_get() {
 
   local response
   response=$(curl -s -H "$AUTH_HEADER" "$API$endpoint" 2>/dev/null || echo "{}")
+  if [ -z "${response:-}" ]; then
+    response="{}"
+  fi
   echo "$response" > "$cache_file"
   cat "$cache_file"
 }
@@ -516,16 +519,22 @@ skill_3_5_forensic_auditor() {
 
   local repo_data
   repo_data=$(api_get "" "${HEAD_SHA}_repo_meta_forensic" 0)
+  repo_data=$(echo "$repo_data" | jq -c '.' 2>/dev/null || echo "{}")
   local security_data
   security_data=$(cat "${OUTPUT_DIR}/04_security_audit.json" 2>/dev/null || echo "{}")
+  security_data=$(echo "$security_data" | jq -c '.' 2>/dev/null || echo "{}")
   local dependency_data
   dependency_data=$(cat "${OUTPUT_DIR}/05_dependency_map.json" 2>/dev/null || echo "{}")
+  dependency_data=$(echo "$dependency_data" | jq -c '.' 2>/dev/null || echo "{}")
   local quality_data
   quality_data=$(cat "${OUTPUT_DIR}/06_code_quality.json" 2>/dev/null || echo "{}")
+  quality_data=$(echo "$quality_data" | jq -c '.' 2>/dev/null || echo "{}")
   local assets_data
   assets_data=$(cat "${OUTPUT_DIR}/07_asset_inventory.json" 2>/dev/null || echo "{}")
+  assets_data=$(echo "$assets_data" | jq -c '.' 2>/dev/null || echo "{}")
   local architecture_data
   architecture_data=$(cat "${OUTPUT_DIR}/08_architecture.json" 2>/dev/null || echo "{}")
+  architecture_data=$(echo "$architecture_data" | jq -c '.' 2>/dev/null || echo "{}")
 
   local forensic_output
   forensic_output=$(jq -n \
@@ -744,7 +753,7 @@ skill_5_security_auditor() {
   security_output=$(jq -n \
     --arg owner "$OWNER" \
     --arg repo "$REPO" \
-    --argjson is_private "$(echo "$repo_data" | jq '.private // false')" \
+    --argjson is_private "$(echo "$repo_data" | jq '.private // false' 2>/dev/null || echo false)" \
     --argjson has_security "$has_security" \
     --argjson has_coc "$has_coc" \
     --argjson has_license "$has_license" \
@@ -1152,22 +1161,31 @@ consolidate_final_result() {
 
   local scout_json
   scout_json=$(cat "${OUTPUT_DIR}/01_scout_output.json" 2>/dev/null || echo "{}")
+  scout_json=$(echo "$scout_json" | jq -c '.' 2>/dev/null || echo "{}")
   local dna_json
   dna_json=$(cat "${OUTPUT_DIR}/02_repo_dna.json" 2>/dev/null || echo "{}")
+  dna_json=$(echo "$dna_json" | jq -c '.' 2>/dev/null || echo "{}")
   local readme_audit_json
   readme_audit_json=$(cat "${OUTPUT_DIR}/03_readme_audit.json" 2>/dev/null || echo "{}")
+  readme_audit_json=$(echo "$readme_audit_json" | jq -c '.' 2>/dev/null || echo "{}")
   local security_json
   security_json=$(cat "${OUTPUT_DIR}/04_security_audit.json" 2>/dev/null || echo "{}")
+  security_json=$(echo "$security_json" | jq -c '.' 2>/dev/null || echo "{}")
   local dependency_json
   dependency_json=$(cat "${OUTPUT_DIR}/05_dependency_map.json" 2>/dev/null || echo "{}")
+  dependency_json=$(echo "$dependency_json" | jq -c '.' 2>/dev/null || echo "{}")
   local quality_json
   quality_json=$(cat "${OUTPUT_DIR}/06_code_quality.json" 2>/dev/null || echo "{}")
+  quality_json=$(echo "$quality_json" | jq -c '.' 2>/dev/null || echo "{}")
   local assets_json
   assets_json=$(cat "${OUTPUT_DIR}/07_asset_inventory.json" 2>/dev/null || echo "{}")
+  assets_json=$(echo "$assets_json" | jq -c '.' 2>/dev/null || echo "{}")
   local architecture_json
   architecture_json=$(cat "${OUTPUT_DIR}/08_architecture.json" 2>/dev/null || echo "{}")
+  architecture_json=$(echo "$architecture_json" | jq -c '.' 2>/dev/null || echo "{}")
   local forensic_json
   forensic_json=$(cat "${OUTPUT_DIR}/03.5_forensic_report.json" 2>/dev/null || echo "{}")
+  forensic_json=$(echo "$forensic_json" | jq -c '.' 2>/dev/null || echo "{}")
 
   local consolidated_output
   consolidated_output=$(jq -n \
