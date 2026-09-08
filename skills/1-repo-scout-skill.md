@@ -206,7 +206,7 @@ echo "$OUTPUT" | jq .
 
 ```json
 {
-  "owner": "byfanzoftheone-stack",
+  "owner": "example-owner",
   "repo": "termux-toolkit",
   "scanned_branch": "main",
   "file_inventory": {

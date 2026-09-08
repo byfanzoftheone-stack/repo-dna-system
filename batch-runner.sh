@@ -8,8 +8,8 @@
 # Usage: ./batch-runner.sh <repos-file> [max-concurrent]
 #
 # Input Format (repos.txt):
-#   byfanzoftheone-stack/bookpro-booking-app
-#   byfanzoftheone-stack/fanzo-avatar
+#   example-owner/example-app
+#   example-owner/example-avatar
 #   ...
 #
 # Output:

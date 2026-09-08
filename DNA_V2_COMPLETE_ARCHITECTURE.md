@@ -9,7 +9,7 @@
 
 Transform the DNA Repository System from a **single-repo analyzer** into a **unified, intelligent ecosystem** that:
 
-✅ Analyzes **all your repos simultaneously**  
+✅ Analyzes **all target repos simultaneously**  
 ✅ Discovers & orchestrates **all your agents** across repos  
 ✅ Optimizes for **phone-first constraints**  
 ✅ **Experiments with new technologies** safely  
@@ -429,8 +429,8 @@ class AgentRegistry {
     return {
       agents: [
         {
-          id: "bookpro-booking-agent",
-          repo: "bookpro-booking-app",
+          id: "sample-app-agent",
+          repo: "example-app",
           type: "booking_assistant",
           capabilities: ["search", "booking", "scheduling"],
           model: "grok/gemini",
@@ -440,7 +440,7 @@ class AgentRegistry {
         },
         {
           id: "refinery-bot",
-          repo: "the-one-refinery",
+          repo: "example-refinery",
           type: "inventory_management",
           capabilities: ["inventory", "pricing", "reporting"],
           model: "claude-3",
@@ -450,7 +450,7 @@ class AgentRegistry {
         },
         {
           id: "saas-orchestrator",
-          repo: "the-one-saas",
+          repo: "example-saas",
           type: "multi_tenant_coordinator",
           capabilities: ["provisioning", "billing", "support"],
           model: "grok",

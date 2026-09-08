@@ -371,9 +371,9 @@ echo "$DNA" | jq .
 ```json
 {
   "metadata": {
-    "owner": "byfanzoftheone-stack",
+    "owner": "example-owner",
     "repo": "termux-toolkit",
-    "url": "https://github.com/byfanzoftheone-stack/termux-toolkit",
+    "url": "https://github.com/example-owner/termux-toolkit",
     "default_branch": "main",
     "extracted_at": "2026-09-06T16:20:00Z",
     "schema_version": "1.1.0",

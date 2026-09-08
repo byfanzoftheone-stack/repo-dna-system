@@ -481,7 +481,7 @@ const synthesizeDNA = (dimensions, risks) => {
   },
   
   "narrative_summary": {
-    "opening": "BookPro is a well-architected web application with solid foundations in modularity and security practices. The layered MVC pattern is clearly implemented and the codebase demonstrates good separation of concerns.",
+    "opening": "SampleApp is a well-architected web application with solid foundations in modularity and security practices. The layered MVC pattern is clearly implemented and the codebase demonstrates good separation of concerns.",
     
     "strengths": [
       "Strong architectural foundation (layered MVC, 85/100)",
@@ -507,7 +507,7 @@ const synthesizeDNA = (dimensions, risks) => {
       "Create comprehensive architecture documentation"
     ],
     
-    "outlook": "With targeted effort on immediate security fixes and technical debt reduction, BookPro can reach A-grade status within 2-3 months. The solid architecture provides a strong foundation for scaling and evolution. Focus should be on: (1) Security remediation, (2) Test coverage improvement, (3) Dependency updates, (4) Documentation enhancement."
+    "outlook": "With targeted effort on immediate security fixes and technical debt reduction, SampleApp can reach A-grade status within 2-3 months. The solid architecture provides a strong foundation for scaling and evolution. Focus should be on: (1) Security remediation, (2) Test coverage improvement, (3) Dependency updates, (4) Documentation enhancement."
   },
   
   "next_analysis": {
@@ -597,7 +597,7 @@ Use `risks` + `security` dimension + `audit_trail`:
 
 ## Real-World Example
 
-**Repository**: BookPro Booking Application  
+**Repository**: SampleApp Booking Application  
 **Overall Score**: 72 (C+ Grade)
 
 **Key Outputs**:

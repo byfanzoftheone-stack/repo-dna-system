@@ -31,7 +31,7 @@ repo-dna-system/
    └─ 10–19 Wave-4 overlay (this drop)
 ```
 
-## the-one-organism
+## sample-organism
 Root: alignment, brain, factory, flowkeeper, governance, infra, ledger, observability, products, shared, swarm, workspace, FLOWKEEPER.md, iof-capabilities.json, demo.ts.
 
 Expanded:
@@ -42,7 +42,7 @@ flowkeeper/src/index.ts
 governance/{capability-registry,policy-engine,promotion-engine,seed-evaluator,system-health}/src/index.ts
 ```
 
-## the-one-brain (ROOT ONLY — recursive truncated)
+## sample-brain (ROOT ONLY — recursive truncated)
 CRITICAL BLOAT: .cache .cargo .npm .next .local .config committed.
 Signal file: brain.json (1,920,841 bytes) = 1,749 atoms.
 
@@ -55,10 +55,10 @@ warehouse-sanitize-ready/ {README.md, Not-alone-cpstories/}
 warehouse-promote-live/ {README.md, ECOSYSTEM-STATUS.md, EXTERNAL-SHELF-DEPLOY.md, GOVERNANCE-PIPELINE-CARWASH.md, HERITAGE-AUTH-GATE.md, Not-alone-cpstories/}
 ```
 
-## fanz-github-mcp
+## sample-github-mcp
 server.js 244 KB, mcp-server.js, iof-docs/{QUICK_REFERENCE,README,SESSION_LOG_20260629}, GROWTH_VECTOR.md stamp 3802c71c.
 
-## fanz-refinery
+## sample-refinery
 bin/fanz, src/orchestrator.js + agents/analysis/bridge/distribution/evolution/ingestion/memory/productionizer/queue.
 node_modules committed = bloat.
 

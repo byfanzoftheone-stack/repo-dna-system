@@ -8,7 +8,7 @@ harvest.js: README / package.json / SYSTEM.md / context.md → Haiku → POST Ra
 
 Railway cache showing 0 vs GitHub 1,749. Harvest PAUSED until loadBrain() reads raw.githubusercontent.com.
 
-Preferred MCP: fanz-github-mcp.vercel.app.
+Preferred MCP: sample-github-mcp.vercel.app.
 
 ## Contract
 

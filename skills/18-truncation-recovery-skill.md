@@ -9,7 +9,7 @@ Connector truncates large trees. Recover:
 2. path_filter on src/, skills/, governance/, brain/
 3. Never treat truncated dump as inventory complete
 
-Used on the-one-brain (31k+ blobs) and fanz-refinery node_modules.
+Used on sample-brain (31k+ blobs) and sample-refinery node_modules.
 
 ## Contract
 

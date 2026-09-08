@@ -2,7 +2,7 @@
 
 Fingerprint any GitHub repository. Evidence-first. Fail-closed.
 
-**This repo is the library + runner.** It is not THE ONE OS dashboard. Results are not stored here.
+**This repo is the library + runner.** It is not a private OS dashboard dashboard. Results are not stored here.
 
 Other people can clone it or call the GitHub Action. You do not need the rest of the organism.
 
@@ -41,7 +41,7 @@ python3 crystallized-knowledge-miner.py dna-extracts/owner/repo
 Needs: `bash`, `curl`, `jq`, `python3`, a GitHub token.
 
 ```bash
-git clone https://github.com/byfanzoftheone-stack/repo-dna-system.git
+git clone https://github.com/example-owner/repo-dna-system.git
 cd repo-dna-system
 export GITHUB_TOKEN=...    # public targets: fine-grained read. private: repo scope
 ./orchestrator.sh owner repo [branch]
@@ -64,7 +64,7 @@ From **your** repo:
 ```yaml
 jobs:
   dna:
-    uses: byfanzoftheone-stack/repo-dna-system/.github/workflows/dna.yml@main
+    uses: example-owner/repo-dna-system/.github/workflows/dna.yml@main
     with:
       target: your-login/your-repo
       branch: main
@@ -112,7 +112,7 @@ dna-extracts/<owner>/<repo>/
 
 This library stays extract-free so other people can fork it.
 
-Fingerprints from THE ONE fleet live in a **private** vault: [repo-dna-results](https://github.com/byfanzoftheone-stack/repo-dna-results). That vault is not this product. It is not the Live OS.
+Fingerprints from a private portfolio live in a **private** vault: [repo-dna-output](https://github.com/example-owner/repo-dna-output). That vault is not this product. It is not the live operations system.
 
 ## Contract
 

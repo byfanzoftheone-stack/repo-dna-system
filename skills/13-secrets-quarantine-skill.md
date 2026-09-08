@@ -4,7 +4,7 @@
 **Output**: `13_quarantine.json`  
 **Purpose**: Committed secrets never promote to Brain.
 
-Wave-4: the-one-market frontend/.env committed.
+Wave-4: sample-market frontend/.env committed.
 
 Earlier waves: rclone / auth dumps in other repos.
 

@@ -362,8 +362,8 @@ echo "$AUDIT" | jq .
 
 ```json
 {
-  "owner": "byfanzoftheone-stack",
-  "repo": "bookpro-booking-app",
+  "owner": "example-owner",
+  "repo": "example-app",
   "readme_status": "good",
   "sections_found": {
     "overview": true,

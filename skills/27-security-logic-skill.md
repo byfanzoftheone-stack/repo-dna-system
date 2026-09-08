@@ -7,7 +7,7 @@
 
 Flags privilege escalation, frontend-only checks, TOCTOU, stale role cache, default-admin init.
 
-Wave-4 hit (skill 5 / 13): `the-one-market` `frontend/.env` stays quarantined. Do not re-promote.
+Wave-4 hit (skill 5 / 13): `sample-market` `frontend/.env` stays quarantined. Do not re-promote.
 
 ## Contract
 
