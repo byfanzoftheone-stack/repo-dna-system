@@ -6,7 +6,7 @@ Fingerprint any GitHub repository. Evidence-first. Fail-closed.
 
 Other people can clone it or call the GitHub Action. You do not need the rest of the organism.
 
-- **Status:** Core pipeline LIVE. Skills 10–40 are files, not runs.
+- **Status:** Core pipeline LIVE. Skill 41 miner LIVE (standalone). Skills 10–40 are files, not runs.
 - **License:** MIT
 - **Results:** local `dna-extracts/` (gitignored) or Action artifacts. Keep fingerprints out of this library.
 
@@ -20,6 +20,13 @@ Other people can clone it or call the GitHub Action. You do not need the rest of
 
 Skill **0** is synthesis (file exists; skill 2 still writes `02_repo_dna.json`).
 Skills **10–40** stay on disk. The orchestrator does not run them.
+Skill **41** (crystallized knowledge miner) runs **after** DNA, separately.
+
+```bash
+python3 crystallized-knowledge-miner.py dna-extracts/owner/repo
+# writes dna-extracts/owner/repo/output/09_crystals.json
+# promote_to_brain=false  harvest_ingest=false
+```
 
 ## What this will not do
 
@@ -86,6 +93,7 @@ dna-extracts/<owner>/<repo>/
     08_architecture.json
     03.5_forensic_report.json     # 23 sections, including 19–23
     README.rewrite.md             # never live README.md
+    09_crystals.json              # skill 41 · optional · never Brain
 ```
 
 ## Honest status
@@ -93,6 +101,7 @@ dna-extracts/<owner>/<repo>/
 | Piece | State |
 |---|---|
 | Core 1–9 + forensic 19–23 | LIVE in `orchestrator.sh` |
+| Skill 41 crystallized-knowledge-miner | LIVE standalone. Not in orchestrator. |
 | Wave-4 skills 10–19 | Files. Ran on a 74-repo inventory once; those extracts were **not** stored |
 | Wave-5 20–30 / Wave-6 31–40 | Files. Never ran |
 | Performance layers | Docs. Not code |
