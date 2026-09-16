@@ -77,3 +77,38 @@ jobs:
           path: dna-extracts/
           if-no-files-found: warn
           retention-days: 30
+
+      # Artifacts above expire in 30 days. This step makes the run durable:
+      # it pushes the same output straight into the private results vault.
+      # Runs only when a vault push token is configured — forks and callers
+      # without DNA_VAULT_TOKEN just keep the artifact-only behavior above.
+      - name: Commit results into vault
+        if: always()
+        env:
+          VAULT_TOKEN: ${{ secrets.DNA_VAULT_TOKEN }}
+          VAULT_REPO: ${{ vars.DNA_VAULT_REPO }}
+        run: |
+          set -euo pipefail
+          : "${VAULT_REPO:=byfanzoftheone-stack/repo-dna-results}"
+          if [[ -z "${VAULT_TOKEN:-}" ]]; then
+            echo "DNA_VAULT_TOKEN not set — skipping vault commit. Results only live in the 30-day artifact above." >&2
+            exit 0
+          fi
+          if [[ ! -d dna-extracts ]]; then
+            echo "No dna-extracts/ produced — nothing to commit." >&2
+            exit 0
+          fi
+          git clone --depth 1 "https://x-access-token:${VAULT_TOKEN}@github.com/${VAULT_REPO}.git" vault
+          mkdir -p vault/extracts
+          cp -r dna-extracts/. vault/extracts/
+          python3 scripts/rebuild_vault_inventory.py vault
+          cd vault
+          git config user.name "repo-dna-bot"
+          git config user.email "dna-bot@users.noreply.github.com"
+          git add extracts INVENTORY.json
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git commit -m "dna: refresh extract for ${{ inputs.target }}"
+          git push origin HEAD:main
