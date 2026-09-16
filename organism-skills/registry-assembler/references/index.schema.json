@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/schemas/index.schema.json",
+  "title": "Repo DNA Registry Index",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "registry_version",
+    "generated_at",
+    "ecosystem",
+    "repos"
+  ],
+  "$defs": {
+    "nullable_datetime": {
+      "type": ["string", "null"],
+      "format": "date-time"
+    },
+    "repo_entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "full_name",
+        "repo_url",
+        "default_branch",
+        "primary_language",
+        "current_state",
+        "ledger_path",
+        "report_path",
+        "readme_rewrite_path",
+        "evidence_path",
+        "readme_exists",
+        "readme_status",
+        "readme_bootstrapped",
+        "last_analyzed_at",
+        "confidence",
+        "tags",
+        "notes"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Stable ID, recommended format: owner__repo"
+        },
+        "name": { "type": "string" },
+        "full_name": {
+          "type": "string",
+          "pattern": "^[^/]+/[^/]+$"
+        },
+        "repo_url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "default_branch": { "type": "string" },
+        "primary_language": { "type": "string" },
+        "current_state": {
+          "type": "string",
+          "enum": ["active", "experimental", "archived", "prototype", "production"]
+        },
+        "ledger_path": { "type": "string" },
+        "report_path": { "type": "string" },
+        "readme_rewrite_path": { "type": "string" },
+        "evidence_path": { "type": "string" },
+        "readme_exists": { "type": "boolean" },
+        "readme_status": {
+          "type": "string",
+          "enum": ["missing", "stale", "partial", "good"]
+        },
+        "readme_bootstrapped": { "type": "boolean" },
+        "last_analyzed_at": { "$ref": "#/$defs/nullable_datetime" },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "notes": { "type": "string" },
+        "repo_dna_schema_version": {
+          "type": "string",
+          "description": "Version of repo_dna schema used for this entry, e.g. 1.1.0"
+        },
+        "analysis_toolchain": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Tools used, e.g. code-dna, copilot-report-v1"
+        }
+      }
+    }
+  },
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.1.0"
+    },
+    "registry_version": {
+      "type": "string",
+      "description": "Your registry release version, e.g. 2026.08.02"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "ecosystem": {
+      "type": "string",
+      "description": "Org, product line, or monorepo family name"
+    },
+    "repos": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/repo_entry" }
+    }
+  }
+}

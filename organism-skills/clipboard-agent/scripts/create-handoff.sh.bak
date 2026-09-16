@@ -1,0 +1,87 @@
+#!/data/data/com.termux/files/usr/bin/bash
+# create-handoff.sh
+# ---------------------------------------------------------------
+# Governed Hand-off creator for THE ONE organism.
+# Bound by organism-constitution + clipboard-agent skill.
+#
+# Usage:
+#   echo "some text" | create-handoff.sh
+#   create-handoff.sh "optional title"
+#   termux-clipboard-get | create-handoff.sh
+#
+# What it does:
+#   1. Reads content from stdin (or fails cleanly)
+#   2. Writes a structured Hand-off MD to the governed intake folder
+#   3. Never auto-promotes
+#   4. Prints the path so FanzAgent / terminal / Warehouse harvest can pick it up
+# ---------------------------------------------------------------
+
+set -euo pipefail
+
+# --- Config (adjust paths to match your Termux / shared storage) ---
+INTAKE_DIR="${IOF_INTAKE_DIR:-$HOME/storage/downloads/IOF/clipboard}"
+# Fallback if storage/downloads is not linked:
+if [ ! -d "$HOME/storage/downloads" ]; then
+  INTAKE_DIR="${IOF_INTAKE_DIR:-$HOME/iof-intake/clipboard}"
+fi
+
+mkdir -p "$INTAKE_DIR"
+
+# --- Read content ---
+if [ -t 0 ]; then
+  echo "No stdin content. Pipe text or use: termux-clipboard-get | $0"
+  exit 1
+fi
+
+CONTENT=$(cat)
+if [ -z "$CONTENT" ]; then
+  echo "Empty content. Nothing to hand off."
+  exit 1
+fi
+
+# --- Metadata ---
+TITLE="${1:-Clipboard capture}"
+TIMESTAMP=$(date -Iseconds)
+SHORT_HASH=$(echo -n "$CONTENT$TIMESTAMP" | md5sum 2>/dev/null | cut -c1-8 || echo "manual")
+ID="handoff-$(date +%Y%m%d-%H%M%S)-$SHORT_HASH"
+FILENAME="$ID.md"
+FILEPATH="$INTAKE_DIR/$FILENAME"
+
+# Simple category heuristic (can be improved later)
+CATEGORY="other"
+echo "$CONTENT" | grep -qiE 'atom|brain|warehouse|iof|constitution|gate' && CATEGORY="system"
+echo "$CONTENT" | grep -qiE 'architecture|schema|component|panel' && CATEGORY="architecture"
+echo "$CONTENT" | grep -qiE 'theory|principle|integrity|compound' && CATEGORY="theory"
+
+# --- Write Hand-off MD ---
+cat > "$FILEPATH" << EOF
+---
+id: $ID
+timestamp: $TIMESTAMP
+source: clipboard
+category: $CATEGORY
+confidence: 0.80
+security_flags: []
+session_id: 
+status: pending
+lineage: []
+---
+
+# $TITLE
+
+## Content
+
+$CONTENT
+
+## Notes
+
+- Created by create-handoff.sh under organism-constitution
+- Status is pending — must pass gates before any promotion
+- Suggested next: lint → Index of Flow review → release if approved
+EOF
+
+echo "Hand-off written (pending):"
+echo "  $FILEPATH"
+echo ""
+echo "This file is ready for Warehouse intake / harvest."
+echo "It will NOT be auto-promoted. Run governed review or catchup when ready."

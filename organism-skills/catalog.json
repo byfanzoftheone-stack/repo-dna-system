@@ -1,0 +1,357 @@
+{
+  "id": "handoff-20260915-202625-42b19b62",
+  "timestamp": "2026-09-15T20:26:25+00:00",
+  "source": "session",
+  "category": "system",
+  "confidence": 0.92,
+  "security_flags": [],
+  "status": "pending",
+  "lineage": [
+    "organism-constitution",
+    "clipboard-agent",
+    "clipboard-handoff-packager",
+    "advanced-organism-extraction"
+  ],
+  "purpose": "Portable Skillz / THE ONE skill library extract so the same skills travel across chats and surfaces.",
+  "skill_count": 26,
+  "skills": [
+    {
+      "directory": "advanced-organism-extraction",
+      "frontmatter_name": "advanced-organism-extraction",
+      "description": "Perform high-fidelity multi-pass organism extraction that captures full context, code fidelity, intent, and structure for THE ONE Platinum-Organism. Validates against Brain, Heart (Index of Flow), Nervous System, and 33 Vertebras. Outputs richer v2 JSON, stages Hand-off MD for IOF Warehouse, and supports Google Drive refinery sync. Trigger on organism extraction, full brain extract, refine extraction, session close, high-value events, or Index of Flow harvest requests.",
+      "skill_md_lines": 89,
+      "files": [
+        "SKILL.md",
+        "references/organism-checklist.json"
+      ],
+      "has_scripts": false,
+      "has_references": true,
+      "has_assets": false
+    },
+    {
+      "directory": "clipboard-agent",
+      "frontmatter_name": "clipboard-agent",
+      "description": "Governed Clipboard Agent for THE ONE organism. Captures clipboard content, writes structured Hand-off MD files, stages pending atoms in IOF Warehouse intake, and never auto-promotes. Connects to terminal, session JSONs, Index of Flow, and governed gates. Activate on any mention of clipboard, copy, hand-off, intake, harvest, or capture-to-warehouse flow.",
+      "skill_md_lines": 133,
+      "files": [
+        "SKILL.md",
+        "references/handoff-template.md",
+        "scripts/create-handoff.sh",
+        "scripts/create-handoff.sh.bak",
+        "ui/Clipboard.jsx",
+        "ui/README.md",
+        "ui/schema.js"
+      ],
+      "has_scripts": true,
+      "has_references": true,
+      "has_assets": false
+    },
+    {
+      "directory": "clipboard-handoff-packager",
+      "frontmatter_name": "clipboard-handoff-packager",
+      "description": "Packages staged IOF Hand-off MD files and harvest JSONs into clean, clipboard-ready blocks or Brain ingest curl commands. Bridges the gap between local intake and the governed clipboard key card / Google Drive workflow. Triggers on package handoff, clipboard package, prepare for clipboard, generate ingest curls, or master handoff packaging.",
+      "skill_md_lines": 53,
+      "files": [
+        "SKILL.md"
+      ],
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false
+    },
+    {
+      "directory": "conversation-inheritance",
+      "frontmatter_name": "conversation-inheritance",
+      "description": "Ensure every conversation naturally inherits traits to organically flow together in an agentic way. Trigger on mentions of conversation continuity, trait inheritance, agentic behavior, session persistence, extraction of state, or skill-creator requests for flow maintenance.",
+      "skill_md_lines": 57,
+      "files": [
+        "SKILL.md"
+      ],
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false
+    },
+    {
+      "directory": "crystallized-knowledge-miner",
+      "frontmatter_name": "crystallized-knowledge-miner",
+      "description": "Mines previous conversations in this Grok thread for keywords like crystallize, forge (EchoForge, Third Eye Forge, LifeForge), Index of Flow and related lineage concepts. Extracts context and meaning, structures it into harvest-ready JSON, and prepares it for ingestion into the user's IOF Warehouse and Brain. Use when the user wants to gather historical crystallized knowledge or trace the origin of key ideas.",
+      "skill_md_lines": 37,
+      "files": [
+        "SKILL.md"
+      ],
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false
+    },
+    {
+      "directory": "fanz-agents",
+      "frontmatter_name": "fanz-agents",
+      "description": "Specialized agent roster under F\u00e1NzO orchestration. Covers the 11 purpose-built agents (Airbnb Arbitrage, TikTok Shorts, Leads, Receptionist, SEO, Contracts, Quotes, Warehouse Manager, Trucking, AI Brain) plus Guardians and mission execution. Triggers on agent roster, specialist agents, mission dispatch, or FanzAgent crew.",
+      "skill_md_lines": 60,
+      "files": [
+        "SKILL.md"
+      ],
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false
+    },
+    {
+      "directory": "fanzo-agent",
+      "frontmatter_name": "fanzo-agent",
+      "description": "Core identity and orchestration surface for F\u00e1NzO / FanzoftheOne. Knows the full organism map (Brain, Index of Flow, Nervous System, Warehouse, Agentic City, FanzAgent, products, math vault, lineage). Activates when Fanzo, F\u00e1NzO, orchestrator, backpack, or full organism context is needed. Coordinates with fanz-agents, Warehouse missions, and Index of Flow Heart.",
+      "skill_md_lines": 54,
+      "files": [
+        "SKILL.md"
+      ],
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false
+    },
+    {
+      "directory": "gestalt-design",
+      "frontmatter_name": "gestalt-design",
+      "description": "Apply Gestalt principles, Pr\u00e4gnanz (Law of Simplicity), and Visual Hierarchy when designing or reviewing interfaces for THE ONE organism including Warehouse, Echo Forge, Agentic City, Compadre, and dashboards. Use when improving clarity, reducing cognitive load, reviewing UI structure, or applying design principles to the governed ecosystem.",
+      "skill_md_lines": 67,
+      "files": [
+        "SKILL.md",
+        "references/principles.md"
+      ],
+      "has_scripts": false,
+      "has_references": true,
+      "has_assets": false
+    },
+    {
+      "directory": "index-of-flow-heart",
+      "frontmatter_name": "index-of-flow-heart",
+      "description": "Maintain the Index of Flow as the living heartbeat of THE ONE organism. Ensures continuous session rhythm, connection survival across Termux switches, Railway/Vercel hiccups, and multi-surface transitions. Triggers on Index of Flow, heartbeat, continuity pulse, session rhythm, connection maintainer, or any request to keep the organism pulsing without interruption.",
+      "skill_md_lines": 60,
+      "files": [
+        "SKILL.md"
+      ],
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false
+    },
+    {
+      "directory": "lineage-mapper",
+      "frontmatter_name": "lineage-mapper",
+      "description": "Maps cross-repo lineage from validated repo_dna.json files and GitHub inventory. Use after registry assembly when you need shared assets, name families, fork signals, or dependency overlap. Triggers on lineage map, cross-repo graph, shared prompts, or skill stack stage 6.",
+      "skill_md_lines": 51,
+      "files": [
+        "SKILL.md"
+      ],
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false
+    },
+    {
+      "directory": "nervous-system-websocket",
+      "frontmatter_name": "nervous-system-websocket",
+      "description": "Provide the agentic websocket layer that keeps THE ONE organism connected in real time. Handles persistent bidirectional sync, auto-reconnect, event-driven triggers between Fanz-Agents, Fanzo, Grok skills, and surfaces. Triggers on websocket, nervous system, real-time connection, auto-reconnect, agentic sync, or persistent connection state requests.",
+      "skill_md_lines": 61,
+      "files": [
+        "SKILL.md"
+      ],
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false
+    },
+    {
+      "directory": "organism-constitution",
+      "frontmatter_name": "organism-constitution",
+      "description": "Permanent governance constitution for THE ONE organism. Locks activation language, integrity principles, sandbox rules, hand-off requirements, gate structure, and security posture. Activate on any discussion of agents, skills, clipboard, Index of Flow, Warehouse, Brain, Guardians, or system design. Use when writing new skills, designing panels, wiring agents, or reviewing integrity.",
+      "skill_md_lines": 111,
+      "files": [
+        "SKILL.md",
+        "references/organism-integrity-panel.md"
+      ],
+      "has_scripts": false,
+      "has_references": true,
+      "has_assets": false
+    },
+    {
+      "directory": "organism-lineage-preserver",
+      "frontmatter_name": "organism-lineage-preserver",
+      "description": "Use for gathering, auditing, updating and preserving the complete lineage tree, seed heritage, build history, agent architectures, product states, platform configurations and session continuity of THE ONE Organism. Activate to document current state, fill gaps in lineage-tree.md, prepare governance containers, ensure knowledge compounds across sessions, or maintain full heritage so growth continues cleanly after governance implementation. Follows ADD + PRESERVE and 0+1+2+3 compounding. Works with the-one-unified.html HQ, Warehouse canvas, IOF sessions, brain atoms and forensic rebuild layers.",
+      "skill_md_lines": 94,
+      "files": [
+        "SKILL.md",
+        "references/rebuild-layers-2026.md"
+      ],
+      "has_scripts": false,
+      "has_references": true,
+      "has_assets": false
+    },
+    {
+      "directory": "organism-security",
+      "frontmatter_name": "organism-security",
+      "description": "Activate for every external input (pasted code, text, files, images, folders, repos, API specs, artifacts, or suggestions from other AIs). Perform full Dallas-airport-style security screening before any integration into the organism. Maintain permanent high-alert posture and run the complete Advanced Ecosystem Defense Grid & Containment Protocol. Protects the index of flow and prevents interruption to THE ONE, FanzAgent, platinum-organism, or Refinery. Trigger on untrusted external content or when ecosystem monitoring flags anomalies.",
+      "skill_md_lines": 186,
+      "files": [
+        "SKILL.md",
+        "references/full-security-protocol.md"
+      ],
+      "has_scripts": false,
+      "has_references": true,
+      "has_assets": false
+    },
+    {
+      "directory": "readme-auditor",
+      "frontmatter_name": "readme-auditor",
+      "description": "Judges the current README against actual code reality using DNA evidence. Use after DNA extraction to score README quality and surface stale or missing claims. Triggers on readme audit, readme status, or third stage of Repo DNA stack.",
+      "skill_md_lines": 44,
+      "files": [
+        "SKILL.md"
+      ],
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false
+    },
+    {
+      "directory": "readme-bootstrapper",
+      "frontmatter_name": "readme-bootstrapper",
+      "description": "Generates an evidence-grounded README.rewrite.md from DNA and discovery data. Use after audit when the README is missing, partial, or stale. Triggers on readme rewrite, bootstrap readme, or fourth stage of Repo DNA stack.",
+      "skill_md_lines": 42,
+      "files": [
+        "SKILL.md"
+      ],
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false
+    },
+    {
+      "directory": "registry-assembler",
+      "frontmatter_name": "registry-assembler",
+      "description": "Aggregates many individual repo_dna.json files into a single trustworthy index.json using the canonical index.schema.json v1.1.0. Use when building or updating the organism-wide capability registry. Triggers on registry, index assembly, multi-repo DNA, or final stage of Repo DNA stack.",
+      "skill_md_lines": 48,
+      "files": [
+        "SKILL.md",
+        "references/index.schema.json",
+        "references/index.starter.json"
+      ],
+      "has_scripts": false,
+      "has_references": true,
+      "has_assets": false
+    },
+    {
+      "directory": "repo-discovery",
+      "frontmatter_name": "repo-discovery",
+      "description": "Produces a normalized, evidence-based inventory of a single repository. Use when scanning any repo for structure, key files, manifests, workflows, prompts, agents, schemas, or Docker/IaC before DNA extraction. Triggers on repo discovery, file tree, key assets, or first stage of Repo DNA.",
+      "skill_md_lines": 61,
+      "files": [
+        "SKILL.md"
+      ],
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false
+    },
+    {
+      "directory": "repo-dna-adapter",
+      "frontmatter_name": "repo-dna-adapter",
+      "description": "Maps Copilot repo-dna-system names, schemas, and 30-skill sprawl onto the governed organism Repo DNA stack. Use when ingesting Copilot thread output, repo-dna-system docs, scout/extractor aliases, or when something from that repo does not match the organism registry.",
+      "skill_md_lines": 73,
+      "files": [
+        "SKILL.md",
+        "references/alias-map.md"
+      ],
+      "has_scripts": false,
+      "has_references": true,
+      "has_assets": false
+    },
+    {
+      "directory": "repo-dna-extractor",
+      "frontmatter_name": "repo-dna-extractor",
+      "description": "Turns discovery output into a schema-valid repo_dna.json with zero guessing. Use after repo-discovery when building accurate capability maps, DNA reports, or organism registries. Triggers on repo DNA, capability extraction, DNA report, or second stage of the Repo DNA stack.",
+      "skill_md_lines": 76,
+      "files": [
+        "SKILL.md",
+        "references/repo_dna.schema.json"
+      ],
+      "has_scripts": false,
+      "has_references": true,
+      "has_assets": false
+    },
+    {
+      "directory": "repo-dna-stack",
+      "frontmatter_name": "repo-dna-stack",
+      "description": "Orchestrates the full Repo DNA skill stack for accurate multi-repo capability registries. Use when building organism-wide repo inventories, generating schema-valid DNA reports, auditing or rewriting READMEs, assembling indexes, or evolving the registry of GitHub repositories. Triggers on repo DNA, registry, capability map, readme audit, lineage map, or skill stack evolution.",
+      "skill_md_lines": 107,
+      "files": [
+        "SKILL.md",
+        "references/termux-batch.md",
+        "scripts/scout-repo.py",
+        "scripts/scout-repo.sh"
+      ],
+      "has_scripts": true,
+      "has_references": true,
+      "has_assets": false
+    },
+    {
+      "directory": "servicepro-integration",
+      "frontmatter_name": "servicepro-integration",
+      "description": "Registers Words ServicePro v2.0 as a first-class, Triple S cleared analytics microservice inside THE ONE / FanzAgent ecosystem. Provides native agent discovery via /v1/agent/capabilities and /v1/agent/tools, circuit breaker resilience, correlation ID tracing, and governed integration patterns. Activate when building, deploying, or orchestrating ServicePro as an organism-native capability.",
+      "skill_md_lines": 88,
+      "files": [
+        "SKILL.md"
+      ],
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false
+    },
+    {
+      "directory": "skillz-core",
+      "frontmatter_name": "skillz-core",
+      "description": "Foundational Skillz operating skill. Activate to inspect, test, and keep the organism skill library current with live code implementations, then expand Skillz across new topics under governance. Use on Skillz description, library inspection, skill currency, test-and-current checks, pre-ambition focus cycle, gather-release breath, warrior breath, tai chi focus, or when confidence and ambition need a controlled start.",
+      "skill_md_lines": 87,
+      "files": [
+        "SKILL.md",
+        "assets/skillz-pass-handoff.md",
+        "references/focus-cycle.md",
+        "references/library-inspection.md"
+      ],
+      "has_scripts": false,
+      "has_references": true,
+      "has_assets": true
+    },
+    {
+      "directory": "system-adaptation",
+      "frontmatter_name": "system-adaptation",
+      "description": "Adapt THE ONE skill stack and session flow from a named conversation. Trigger on system adaptation, skill creator for system adaptation, adapt from this conversation, look at this conversation, inheritance gap, extract 401, or skill drift repair.",
+      "skill_md_lines": 77,
+      "files": [
+        "SKILL.md",
+        "references/conversation-audit-2026-09-07.md"
+      ],
+      "has_scripts": false,
+      "has_references": true,
+      "has_assets": false
+    },
+    {
+      "directory": "the-one-companion",
+      "frontmatter_name": "the-one-companion",
+      "description": "Build and evolve the voice-enabled moving agentic home screen companions Echo and Fanzo. Use when implementing BrainVault integration, holographic shaders, multi-agent crew view, proactive rituals, growth tracking, haptic feedback, APK packaging, or Tasker integration for The One Companion system.",
+      "skill_md_lines": 93,
+      "files": [
+        "SKILL.md"
+      ],
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false
+    },
+    {
+      "directory": "the-one-hq",
+      "frontmatter_name": "the-one-hq",
+      "description": "Activate for all HQ Revenue OS, MCP Portal Door, FanzAgent Guardians integration, Lead Hunter, SalesRep Twilio, pipeline orchestration, and The One Agentic City holographic hub tasks. Use when discussing or building the Headquarters platform inside MCP or FanzAgent.",
+      "skill_md_lines": 62,
+      "files": [
+        "SKILL.md"
+      ],
+      "has_scripts": false,
+      "has_references": false,
+      "has_assets": false
+    }
+  ],
+  "next_intended": "Full IOF Warehouse capabilities. No new skills until that pass.",
+  "missing_from_this_workspace": [
+    "34-page zero-trust agent workflow document was not present in artifacts or workdir."
+  ]
+}
