@@ -403,15 +403,15 @@ skill_3_readme_auditor() {
     status="good"
 
     local has_overview
-    has_overview=$(echo "$readme" | grep -i -c "overview\|about\|introduction" || echo 0)
+    has_overview=$(echo "$readme" | grep -i -c "overview\|about\|introduction" || true)
     local has_setup
-    has_setup=$(echo "$readme" | grep -i -c "setup\|installation\|prerequisites" || echo 0)
+    has_setup=$(echo "$readme" | grep -i -c "setup\|installation\|prerequisites" || true)
     local has_run
-    has_run=$(echo "$readme" | grep -i -c "usage\|quick start\|run\|getting started" || echo 0)
+    has_run=$(echo "$readme" | grep -i -c "usage\|quick start\|run\|getting started" || true)
     local has_test
-    has_test=$(echo "$readme" | grep -i -c "test\|testing" || echo 0)
+    has_test=$(echo "$readme" | grep -i -c "test\|testing" || true)
     local has_deploy
-    has_deploy=$(echo "$readme" | grep -i -c "deploy\|production" || echo 0)
+    has_deploy=$(echo "$readme" | grep -i -c "deploy\|production" || true)
 
     if [ "$has_setup" -eq 0 ] || [ "$has_run" -eq 0 ]; then
       status="partial"
