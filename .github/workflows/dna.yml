@@ -45,7 +45,18 @@ on:
         required: false
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout DNA library
+        uses: actions/checkout@v4
+      - name: Input-safety regression tests
+        run: bash tests/test_validate_inputs.sh
+
   extract:
+    needs: test
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -56,16 +67,13 @@ jobs:
       - name: Run orchestrator v2
         env:
           GITHUB_TOKEN: ${{ secrets.DNA_GITHUB_TOKEN || github.token }}
+          # Inputs travel as data in env vars, never pasted into script text.
+          INPUT_TARGET: ${{ inputs.target }}
+          INPUT_BRANCH: ${{ inputs.branch }}
         run: |
           set -euo pipefail
-          TARGET="${{ inputs.target }}"
-          BRANCH="${{ inputs.branch }}"
-          if [[ ! "$TARGET" =~ ^[A-Za-z0-9._-]+/[A-Za-z0-9._-]+$ ]]; then
-            echo "target must be owner/repo" >&2
-            exit 1
-          fi
-          OWNER="${TARGET%/*}"
-          REPO="${TARGET#*/}"
+          PARTS="$(bash scripts/validate_inputs.sh "$INPUT_TARGET" "$INPUT_BRANCH")"
+          read -r OWNER REPO BRANCH <<< "$PARTS"
           chmod +x orchestrator.sh
           ./orchestrator.sh "$OWNER" "$REPO" "$BRANCH"
 
@@ -87,6 +95,8 @@ jobs:
         env:
           VAULT_TOKEN: ${{ secrets.DNA_VAULT_TOKEN }}
           VAULT_REPO: ${{ vars.DNA_VAULT_REPO }}
+          INPUT_TARGET: ${{ inputs.target }}
+          INPUT_BRANCH: ${{ inputs.branch }}
         run: |
           set -euo pipefail
           : "${VAULT_REPO:=byfanzoftheone-stack/repo-dna-results}"
@@ -110,5 +120,7 @@ jobs:
             echo "No changes to commit."
             exit 0
           fi
-          git commit -m "dna: refresh extract for ${{ inputs.target }}"
+          PARTS="$(bash scripts/validate_inputs.sh "$INPUT_TARGET" "$INPUT_BRANCH")"
+          read -r OWNER REPO _ <<< "$PARTS"
+          git commit -m "dna: refresh extract for ${OWNER}/${REPO}"
           git push origin HEAD:main
