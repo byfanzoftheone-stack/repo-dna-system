@@ -6,7 +6,8 @@ Fingerprint any GitHub repository. Evidence-first. Fail-closed.
 
 Other people can clone it or call the GitHub Action. You do not need the rest of the organism.
 
-- **Status:** Core pipeline LIVE. Skill 41 miner LIVE (standalone). Skills 10–40 are files, not runs.
+- **Status:** Skills 1, 2, 3 and 4 run in `orchestrator.sh`; 3.5 forensic is a labeled placeholder. Skill 41 miner runs standalone. Skills 5–40 are files, not runs. See [Honest status](#honest-status).
+- **Proof:** CI runs offline end-to-end tests on every push — see [Verification](#verification).
 - **License:** MIT
 - **Results:** local `dna-extracts/` (gitignored) or Action artifacts. Keep fingerprints out of this library.
 
@@ -14,9 +15,18 @@ Other people can clone it or call the GitHub Action. You do not need the rest of
 
 ```
 1 scout → 2 extractor → 3 README auditor
-  → 5 security → 6 deps → 7 quality → 8 assets → 9 architecture
-  → 3.5 forensic (23 sections) → 4 README.rewrite.md
+  → 3.5 forensic (placeholder, labeled) → 4 README.rewrite.md
 ```
+
+| Skill | What it really does today |
+|---|---|
+| 1 scout | Lists root files, checks 10 evidence files, lists workflows. `scout_status` is `empty` if nothing was found |
+| 2 extractor | Languages from the GitHub languages API (bytes), package managers and runtime from root manifests, frameworks from `package.json`. Anything not determined is listed in `gaps` |
+| 3 README auditor | Keyword match for 7 standard sections; `audit_score` = percent found |
+| 3.5 forensic | **Placeholder.** Scores are `null` and `status` is `placeholder` until the 23-section analysis is built |
+| 4 README rewrite | Writes `README.rewrite.md` beside the extract. Never touches the target |
+
+If the branch head commit cannot be read (missing repo, private without token, API error), the run **fails closed**: exit code 2, `run_status.json` says `failed`, and no DNA output is written.
 
 Skill **0** is synthesis (file exists; skill 2 still writes `02_repo_dna.json`).
 Skills **10–40** stay on disk. The orchestrator does not run them.
@@ -100,13 +110,36 @@ dna-extracts/<owner>/<repo>/
 
 | Piece | State |
 |---|---|
-| Core 1–9 + forensic 19–23 | LIVE in `orchestrator.sh` |
+| Skills 1, 2, 3, 4 | LIVE in `orchestrator.sh`, covered by offline fixture tests |
+| Skill 3.5 forensic (23 sections) | Placeholder only. Outputs `null` scores, labeled `placeholder` |
+| Skills 5–9 (security, deps, quality, assets, architecture) | Files. **Not** run by the orchestrator |
 | Skill 41 crystallized-knowledge-miner | LIVE standalone. Not in orchestrator. |
 | Wave-4 skills 10–19 | Files. Ran on a 74-repo inventory once; those extracts were **not** stored |
 | Wave-5 20–30 / Wave-6 31–40 | Files. Never ran |
 | Performance layers | Docs. Not code |
 | Extracts in this git tree | **0** (gitignored on purpose) |
 | `INDEX.md` numbering | Drifts vs real filenames. **Paths win.** `INDEX_ORCH.md` is the live pipeline map |
+
+## Verification
+
+Run locally, no network or token needed:
+
+```bash
+bash tests/test_validate_inputs.sh        # hostile workflow inputs are rejected, never executed
+bash tests/test_orchestrator_fixtures.sh  # end-to-end scan against a local fake GitHub API
+```
+
+The fixture test checks known truth: correct primary language, `yarn` not `npm` when `yarn.lock` exists,
+`pip` (and no `npm`) for a Python repo, frameworks vs plain dependencies, measured README score,
+placeholder labeling, and fail-closed behavior for an unreadable repo.
+CI (`.github/workflows/ci.yml`) runs both suites plus ShellCheck on every push and pull request.
+
+### Correction (2026-10-22)
+
+Before this date, `02_repo_dna.json` was largely hardcoded: every repo was recorded as
+`languages: "detected"`, `package_managers: ["npm"]`, `frameworks: []`, `gaps: []`, `confidence: 0.70`,
+and README/forensic scores were a fixed `50`. A scan that could not read the repo still reported success.
+Fingerprints produced before this fix should not be trusted for those fields. Found during an outside audit.
 
 ## Store results separately
 
@@ -118,4 +151,4 @@ Fingerprints from a private portfolio live in a **private** vault: [repo-dna-out
 
 - GAP over guess. Evidence paths required.
 - Fail closed. No auto-promote. No live README rewrite. No auto-push.
-- Tree fetched once. Truncation is a gap, not a small repo.
+- Root listing only today (no full tree fetch yet). Deeper files are not inspected.
