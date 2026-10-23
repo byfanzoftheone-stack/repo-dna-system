@@ -5,7 +5,7 @@
 # From another repo:
 #   jobs:
 #     dna:
-#       uses: example-owner/repo-dna-system/.github/workflows/dna.yml@main
+#       uses: byfanzoftheone-stack/repo-dna-system/.github/workflows/dna.yml@main
 #       with:
 #         target: owner/repo
 #       secrets:
@@ -51,9 +51,15 @@ jobs:
       contents: read
     steps:
       - name: Checkout DNA library
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          # Always this repo, even when another repo calls this workflow.
+          repository: byfanzoftheone-stack/repo-dna-system
+          persist-credentials: false
       - name: Input-safety regression tests
         run: bash tests/test_validate_inputs.sh
+      - name: End-to-end scan against offline fixture API
+        run: bash tests/test_orchestrator_fixtures.sh
 
   extract:
     needs: test
@@ -62,7 +68,10 @@ jobs:
       contents: read
     steps:
       - name: Checkout DNA library
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          repository: byfanzoftheone-stack/repo-dna-system
+          persist-credentials: false
 
       - name: Run orchestrator v2
         env:
@@ -79,19 +88,38 @@ jobs:
 
       - name: Upload fingerprints
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: dna-extract
           path: dna-extracts/
           if-no-files-found: warn
           retention-days: 30
 
-      # Artifacts above expire in 30 days. This step makes the run durable:
-      # it pushes the same output straight into the private results vault.
-      # Runs only when a vault push token is configured — forks and callers
-      # without DNA_VAULT_TOKEN just keep the artifact-only behavior above.
+  # Separate job on a fresh runner: the vault push token never shares a
+  # machine with the scan. Runs only when DNA_VAULT_TOKEN is configured —
+  # forks and callers without it keep the 30-day artifact only.
+  vault:
+    needs: extract
+    if: ${{ !cancelled() && needs.extract.result != 'skipped' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout DNA library
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          repository: byfanzoftheone-stack/repo-dna-system
+          persist-credentials: false
+
+      - name: Download fingerprints
+        id: dl
+        continue-on-error: true
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: dna-extract
+          path: dna-extracts/
+
       - name: Commit results into vault
-        if: always()
         env:
           VAULT_TOKEN: ${{ secrets.DNA_VAULT_TOKEN }}
           VAULT_REPO: ${{ vars.DNA_VAULT_REPO }}
@@ -101,13 +129,16 @@ jobs:
           set -euo pipefail
           : "${VAULT_REPO:=byfanzoftheone-stack/repo-dna-results}"
           if [[ -z "${VAULT_TOKEN:-}" ]]; then
-            echo "DNA_VAULT_TOKEN not set — skipping vault commit. Results only live in the 30-day artifact above." >&2
+            echo "DNA_VAULT_TOKEN not set — skipping vault commit. Results only live in the 30-day artifact." >&2
             exit 0
           fi
-          if [[ ! -d dna-extracts ]]; then
-            echo "No dna-extracts/ produced — nothing to commit." >&2
+          if [[ ! -d dna-extracts ]] || [[ -z "$(ls -A dna-extracts)" ]]; then
+            echo "No fingerprints produced — nothing to commit." >&2
             exit 0
           fi
+          # Validate while still in the repo root, where the script lives.
+          PARTS="$(bash scripts/validate_inputs.sh "$INPUT_TARGET" "$INPUT_BRANCH")"
+          read -r OWNER REPO _ <<< "$PARTS"
           git clone --depth 1 "https://x-access-token:${VAULT_TOKEN}@github.com/${VAULT_REPO}.git" vault
           mkdir -p vault/extracts
           cp -r dna-extracts/. vault/extracts/
@@ -120,7 +151,5 @@ jobs:
             echo "No changes to commit."
             exit 0
           fi
-          PARTS="$(bash scripts/validate_inputs.sh "$INPUT_TARGET" "$INPUT_BRANCH")"
-          read -r OWNER REPO _ <<< "$PARTS"
           git commit -m "dna: refresh extract for ${OWNER}/${REPO}"
           git push origin HEAD:main

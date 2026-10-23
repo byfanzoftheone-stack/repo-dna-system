@@ -29,7 +29,7 @@ INCREMENTAL_MODE="${DNA_INCREMENTAL_MODE:-1}"
 FORCE_FULL="${DNA_FORCE_FULL:-0}"
 
 # API base
-API="https://api.github.com/repos/${OWNER}/${REPO}"
+API="${DNA_API_BASE:-https://api.github.com}/repos/${OWNER}/${REPO}"
 AUTH_HEADER="Authorization: token ${TOKEN}"
 
 # Timestamps
@@ -266,9 +266,6 @@ skill_1_repo_scout() {
 
   local scout_file="${OUTPUT_DIR}/01_scout_output.json"
 
-  local repo_meta
-  repo_meta=$(api_get "" "${HEAD_SHA}_repo_meta" 0)
-
   local root_files
   root_files=$(api_get "/contents?ref=${BRANCH}" "${HEAD_SHA}_root_contents" 0 | jq '[.[] | select(.type != null) | {name: .name, type: .type}]' 2>/dev/null || echo "[]")
 
@@ -304,7 +301,7 @@ skill_1_repo_scout() {
       file_inventory: {root_files: $root_files},
       evidence_files: {primary: $evidence, workflows: $workflows},
       timestamp: now | todate,
-      scout_status: "success"
+      scout_status: (if ($root_files | length) == 0 then "empty" else "success" end)
     }')
 
   echo "$scout_output" > "$scout_file"
@@ -320,27 +317,25 @@ skill_1_repo_scout() {
 
 skill_2_dna_extractor() {
   begin_skill_metrics "skill_2_dna_extractor"
-  local _scout_file="$1"
+  local scout_file="$1"
   log "Skill 2: DNA Extractor — Extracting repository DNA..."
 
   local dna_file="${OUTPUT_DIR}/02_repo_dna.json"
 
-  local package_json
-  package_json=$(fetch_file_content "package.json" "${HEAD_SHA}_package_json" | jq '.' 2>/dev/null || echo 'null')
-  local dockerfile
-  dockerfile=$(fetch_file_content "Dockerfile" "${HEAD_SHA}_dockerfile" || echo 'null')
-  local readme
-  readme=$(fetch_file_content "README.md" "${HEAD_SHA}_readme" || echo 'null')
+  # Every field below is derived from evidence or listed in gaps. No defaults
+  # are presented as findings.
+  local root_names
+  root_names=$(jq -c '[.file_inventory.root_files[]?.name]' "$scout_file" 2>/dev/null || echo "[]")
 
-  local languages="[]"
-  local frameworks="[]"
-  local runtime_type="unknown"
-
-  if [ "$package_json" != "null" ]; then
-    languages='["JavaScript"]'
-    runtime_type="nodejs"
-    frameworks=$(echo "$package_json" | jq '[.dependencies, .devDependencies | to_entries[] | select(.value != null) | .key]' 2>/dev/null | jq -s 'add | unique' || echo "[]")
+  local langs_raw
+  langs_raw=$(api_get "/languages" "${HEAD_SHA}_languages" 0)
+  if ! echo "$langs_raw" | jq -e 'type == "object" and (has("message") | not)' >/dev/null 2>&1; then
+    langs_raw='null'
   fi
+
+  local package_json
+  package_json=$(fetch_file_content "package.json" "${HEAD_SHA}_package_json" | jq -c '.' 2>/dev/null || echo 'null')
+  [ -n "$package_json" ] || package_json='null'
 
   local dna_output
   dna_output=$(jq -n \
@@ -348,32 +343,69 @@ skill_2_dna_extractor() {
     --arg repo "$REPO" \
     --arg branch "$BRANCH" \
     --arg head_sha "$HEAD_SHA" \
-    --argjson languages "$languages" \
-    --argjson frameworks "$frameworks" \
-    --arg runtime "$runtime_type" \
-    '{
-      metadata: {
-        owner: $owner,
-        repo: $repo,
-        url: "https://github.com/\($owner)/\($repo)",
-        default_branch: $branch,
-        head_sha: $head_sha,
-        extracted_at: now | todate,
-        schema_version: "1.1.0",
-        confidence: 0.70
-      },
-      tech_stack: {
-        languages: [{"name": "detected", "primary": true}],
-        frameworks: [],
-        runtime: {type: $runtime},
-        package_managers: ["npm"]
-      },
-      project_info: {
-        name: $repo,
-        purpose: "unknown"
-      },
-      gaps: []
-    }')
+    --argjson root "$root_names" \
+    --argjson langs "$langs_raw" \
+    --argjson pkg "$package_json" \
+    '
+    def has_file($f): ($root | index($f)) != null;
+    ($langs // {} | to_entries | sort_by(-.value)) as $lang_list
+    | ([ ($pkg.dependencies // {}), ($pkg.devDependencies // {}) ] | add // {}) as $deps
+    | ["react","next","vue","nuxt","svelte","@sveltejs/kit","@angular/core","express","fastify","koa","@nestjs/core","vite","electron","react-native","expo","hono"] as $known_fw
+    | ([ if has_file("package.json") then
+           (if has_file("pnpm-lock.yaml") then "pnpm" elif has_file("yarn.lock") then "yarn" else "npm" end)
+         else empty end,
+         (if has_file("requirements.txt") or has_file("pyproject.toml") or has_file("setup.py") then "pip" else empty end),
+         (if has_file("Pipfile") then "pipenv" else empty end),
+         (if has_file("poetry.lock") then "poetry" else empty end),
+         (if has_file("Cargo.toml") then "cargo" else empty end),
+         (if has_file("go.mod") then "go mod" else empty end),
+         (if has_file("pom.xml") then "maven" else empty end),
+         (if has_file("build.gradle") or has_file("build.gradle.kts") then "gradle" else empty end),
+         (if has_file("Gemfile") then "bundler" else empty end),
+         (if has_file("composer.json") then "composer" else empty end)
+       ] | unique) as $pms
+    | (if has_file("package.json") then {type:"nodejs", evidence:"package.json"}
+       elif has_file("pyproject.toml") or has_file("requirements.txt") or has_file("setup.py") then {type:"python", evidence:"python manifest in root"}
+       elif has_file("go.mod") then {type:"go", evidence:"go.mod"}
+       elif has_file("Cargo.toml") then {type:"rust", evidence:"Cargo.toml"}
+       elif has_file("pom.xml") or has_file("build.gradle") or has_file("build.gradle.kts") then {type:"jvm", evidence:"JVM build file in root"}
+       elif has_file("Dockerfile") then {type:"docker", evidence:"Dockerfile"}
+       else {type:"unknown"} end) as $runtime
+    | {
+        metadata: {
+          owner: $owner,
+          repo: $repo,
+          url: "https://github.com/\($owner)/\($repo)",
+          default_branch: $branch,
+          head_sha: $head_sha,
+          extracted_at: (now | todate),
+          schema_version: "1.1.0",
+          evidence_paths: (["GitHub API: /contents (root listing)"]
+                           + (if $langs != null then ["GitHub API: /languages"] else [] end)
+                           + (if $pkg != null then ["package.json"] else [] end))
+        },
+        tech_stack: {
+          languages: [ $lang_list | to_entries[] | {name: .value.key, primary: (.key == 0), evidence: "GitHub languages API (\(.value.value) bytes)"} ],
+          frameworks: [ $deps | to_entries[] | select(.key as $k | $known_fw | index($k)) | {name: .key, version: .value, evidence: "package.json"} ],
+          runtime: $runtime,
+          package_managers: $pms
+        },
+        project_info: { name: $repo },
+        architecture: {
+          structure: "unknown",
+          dependencies: { external: [ $deps | to_entries[] | {name: .key, version: .value, type: "npm"} ] }
+        },
+        gaps: (
+          [ if $langs == null then {category:"tech_stack", issue:"GAP: languages API unavailable; languages not determined", severity:"warning"}
+            elif ($lang_list | length) == 0 then {category:"tech_stack", issue:"GAP: GitHub reports no languages for this repository", severity:"info"}
+            else empty end,
+            if ($pms | length) == 0 then {category:"tech_stack", issue:"GAP: no package manager manifest found in repository root", severity:"info"} else empty end,
+            if $runtime.type == "unknown" then {category:"tech_stack", issue:"GAP: runtime not determined from root files", severity:"info"} else empty end,
+            {category:"project_info", issue:"GAP: purpose not extracted by this skill (see forensic report)", severity:"info"},
+            {category:"architecture", issue:"GAP: architecture structure not analyzed by this skill", severity:"info"}
+          ]
+        )
+      }')
 
   echo "$dna_output" > "$dna_file"
   success "DNA extraction complete. Output: $dna_file"
@@ -412,6 +444,10 @@ skill_3_readme_auditor() {
     has_test=$(echo "$readme" | grep -i -c "test\|testing" || true)
     local has_deploy
     has_deploy=$(echo "$readme" | grep -i -c "deploy\|production" || true)
+    local has_api
+    has_api=$(echo "$readme" | grep -i -c "api\|endpoint" || true)
+    local has_env
+    has_env=$(echo "$readme" | grep -i -c "environment\|\.env\|configuration" || true)
 
     if [ "$has_setup" -eq 0 ] || [ "$has_run" -eq 0 ]; then
       status="partial"
@@ -423,18 +459,22 @@ skill_3_readme_auditor() {
       --argjson run "$has_run" \
       --argjson test "$has_test" \
       --argjson deploy "$has_deploy" \
+      --argjson api "$has_api" \
+      --argjson env "$has_env" \
       '{
         overview: ($overview > 0),
         setup: ($setup > 0),
         run: ($run > 0),
         test: ($test > 0),
-        api: false,
+        api: ($api > 0),
         deployment: ($deploy > 0),
-        environment: false
+        environment: ($env > 0)
       }')
   fi
 
-  local audit_score=50
+  # Score = share of the 7 standard sections found (keyword match), 0-100.
+  local audit_score
+  audit_score=$(echo "$sections" | jq '[.[] | select(. == true)] | length | . * 100 / 7 | floor')
   local audit_output
   audit_output=$(jq -n \
     --arg owner "$OWNER" \
@@ -450,6 +490,7 @@ skill_3_readme_auditor() {
       contradictions: [],
       gaps: [],
       audit_score: $score,
+      audit_score_method: "percent of 7 standard README sections detected by keyword match",
       timestamp: now | todate
     }')
 
@@ -486,7 +527,9 @@ skill_3_5_forensic_auditor() {
         repo: $repo,
         analyzed_at: now | todate,
         analysis_version: "23-section-protocol-v1",
-        confidence_level: 0.65
+        status: "placeholder",
+        note: "Full 23-section analysis is not implemented. Fields marked null were not measured.",
+        confidence_level: null
       },
       "1_system_identity": {
         system_name: $repo,
@@ -499,8 +542,8 @@ skill_3_5_forensic_auditor() {
       },
       "3_capability_inventory": [],
       "10_production_readiness": {
-        overall_score: 50,
-        maturity_level: "Experimental",
+        overall_score: null,
+        maturity_level: "not assessed",
         blockers: ["Complete forensic analysis required"]
       },
       "18_what_actually_exists": {
@@ -514,7 +557,7 @@ skill_3_5_forensic_auditor() {
         what_it_cannot_do: [],
         most_valuable_assets: [],
         commercial_potential: "UNKNOWN",
-        final_maturity_score: 50
+        final_maturity_score: null
       }
     }')
 
@@ -541,7 +584,8 @@ skill_4_readme_generator() {
   system_name=$(jq -r '.metadata.owner + "/" + .metadata.repo' "$dna_file" 2>/dev/null || echo "Repository")
   local repo_url="https://github.com/${OWNER}/${REPO}"
 
-  local readme_content="# ${system_name}
+  local readme_content
+  readme_content="# ${system_name}
 
 **Repository**: [$repo_url]($repo_url)
 
@@ -677,6 +721,16 @@ main() {
   HEAD_SHA=$(get_head_sha)
 
   log "Head SHA: $HEAD_SHA"
+
+  # Fail closed: without a readable commit, any output would be invented.
+  if [[ ! "$HEAD_SHA" =~ ^[0-9a-f]{40}$ ]]; then
+    jq -n --arg owner "$OWNER" --arg repo "$REPO" --arg branch "$BRANCH" \
+      '{status: "failed", owner: $owner, repo: $repo, branch: $branch,
+        reason: "could not read branch head commit (repo or branch missing, private without token, or API error)",
+        at: (now | todate)}' > "${WORK_DIR}/run_status.json"
+    echo "ERROR: cannot read ${OWNER}/${REPO}@${BRANCH} — no outputs written" >&2
+    exit 2
+  fi
 
   local scout_file="${OUTPUT_DIR}/01_scout_output.json"
   local dna_file="${OUTPUT_DIR}/02_repo_dna.json"
