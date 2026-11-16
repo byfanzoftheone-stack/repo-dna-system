@@ -1,0 +1,40 @@
+# CI — runs on every push and pull request. No tokens, no network targets.
+# Proves, in public, that input-safety tests pass and shell scripts are clean.
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+
+      - name: Input-safety regression tests
+        run: bash tests/test_validate_inputs.sh
+
+      - name: End-to-end scan against offline fixture API
+        run: bash tests/test_orchestrator_fixtures.sh
+
+      - name: ShellCheck (all shell scripts, warnings fail the build)
+        run: |
+          set -euo pipefail
+          shellcheck --version
+          mapfile -t files < <(git ls-files '*.sh')
+          shellcheck -S warning "${files[@]}"
+
+      - name: Workflow and Python syntax
+        run: |
+          set -euo pipefail
+          python3 -m venv /tmp/ci-venv && /tmp/ci-venv/bin/pip install --quiet pyyaml
+          /tmp/ci-venv/bin/python -c "import sys,yaml; [yaml.safe_load(open(f)) for f in sys.argv[1:]]; print('workflows parse')" .github/workflows/*.yml
+          python3 -m py_compile scripts/rebuild_vault_inventory.py crystallized-knowledge-miner.py tests/fixture_api.py
+          echo "python compiles"
