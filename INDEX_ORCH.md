@@ -36,6 +36,7 @@ Skills 5–9 existed as LIVE guides. The orchestrator never called them.
 | 9 | `08_architecture.json` + `08_architecture.txt` |
 | 3.5 | `03.5_forensic_report.json` (all 23 keys) |
 | 4 | `README.rewrite.md` — **never** live `README.md` |
+| final | `10_consolidated_dna_report.json` (single merged DNA result) |
 
 ## Forensic 19–23 (fail-closed)
 
