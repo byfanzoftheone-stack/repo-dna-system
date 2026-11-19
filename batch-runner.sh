@@ -392,6 +392,17 @@ main() {
 
   load_repos
 
+  # Governance: batches above the free limit need a valid paid license (fail closed).
+  local tier free_limit
+  tier="$("$(dirname "${BASH_SOURCE[0]}")/scripts/license.sh")" || exit 1
+  free_limit="${DNA_FREE_BATCH_LIMIT:-5}"
+  if [[ "$tier" == "free" && "$TOTAL_REPOS" -gt "$free_limit" ]]; then
+    error "Free tier allows batches of up to ${free_limit} repos (got ${TOTAL_REPOS}). See MONETIZATION.md."
+    "$(dirname "${BASH_SOURCE[0]}")/scripts/audit_log.sh" batch_denied "repos=${TOTAL_REPOS}" "tier=free"
+    exit 4
+  fi
+  "$(dirname "${BASH_SOURCE[0]}")/scripts/audit_log.sh" batch_start "repos=${TOTAL_REPOS}" "tier=${tier}"
+
   log "Processing $TOTAL_REPOS repositories..."
   log ""
 

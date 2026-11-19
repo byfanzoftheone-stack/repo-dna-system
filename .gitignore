@@ -1,1 +1,6 @@
 dna-extracts/
+.env
+.env.*
+!.env.example
+*.pem
+__pycache__/

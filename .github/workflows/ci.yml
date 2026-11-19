@@ -21,6 +21,9 @@ jobs:
       - name: Input-safety regression tests
         run: bash tests/test_validate_inputs.sh
 
+      - name: Governance and licensing tests
+        run: bash tests/test_governance.sh
+
       - name: End-to-end scan against offline fixture API
         run: bash tests/test_orchestrator_fixtures.sh
 

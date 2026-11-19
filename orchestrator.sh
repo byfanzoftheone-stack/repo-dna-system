@@ -1359,6 +1359,12 @@ main() {
   log "Start Time: ${START_TIME}"
   log ""
 
+  # Governance: license tier + free-tier daily quota (fail closed), then audit.
+  local gov_dir
+  gov_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/scripts"
+  "${gov_dir}/rate_limit.sh" || exit $?
+  "${gov_dir}/audit_log.sh" scan_start "target=${OWNER}/${REPO}" "branch=${BRANCH}"
+
   setup_directories
   load_previous_state
   HEAD_SHA=$(get_head_sha)
